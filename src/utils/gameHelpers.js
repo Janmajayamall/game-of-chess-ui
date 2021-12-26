@@ -58,12 +58,238 @@ export function getBlockerboard(bitboards) {
 	return blockerboard;
 }
 
+export function getBishopAttacks(
+	attackingPiece,
+	square,
+	blockboard,
+	bitboards
+) {
+	let sr = square / 8;
+	let sf = square % 8;
+
+	let r = sr + 1;
+	let f = sf + 1;
+
+	// potential attacking sqaures
+	let aBishopB = bitboards[attackingPiece];
+	let attacks = 0;
+	while (r <= 7 && f <= 7) {
+		let sq = r * 8 + f;
+		let sqPosB = 1 << sq;
+
+		if (sqPosB & (aBishopB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		r += 1;
+		f += 1;
+	}
+
+	r = sr + 1;
+	f = sf - 1;
+	while (r <= 7 && f >= 0) {
+		let sq = r * 8 + f;
+		let sqPosB = 1 << sq;
+
+		if (sqPosB & (aBishopB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		r += 1;
+		f -= 1;
+	}
+
+	r = sr - 1;
+	f = sf + 1;
+	while (f <= 7) {
+		let sq = r * 8 + f;
+		let sqPosB = 1 << sq;
+
+		if (sqPosB & (aBishopB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		f += 1;
+		r -= 1;
+	}
+
+	r = sr - 1;
+	f = sf - 1;
+	while (true) {
+		let sq = r * 8 + f;
+		let sqPosB = 1 << sq;
+
+		if (sqPosB & (aBishopB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		r -= 1;
+		f -= 1;
+	}
+	return attacks;
+}
+
+export function getRookAttacks(attackingPiece, square, blockboard, bitboards) {
+	let sr = square / 8;
+	let sf = square % 8;
+
+	let r = sr + 1;
+	let f;
+
+	// potential attacking sqaures
+	let aRookB = bitboards[attackingPiece];
+	let attacks;
+	while (r <= 7) {
+		let sq = r * 8 + sf;
+		let sqPosB = 1 << sq;
+
+		if (aRookB & (sqPosB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		r += 1;
+	}
+
+	f = sf + 1;
+	while (f <= 7) {
+		let sq = sr * 8 + f;
+		let sqPosB = 1 << sq;
+
+		if (aRookB & (sqPosB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		attacks |= sqPosB;
+		f += 1;
+	}
+
+	r = sr - 1;
+	while (r >= 0) {
+		let sq = r * 8 + sf;
+		let sqPosB = 1 << sq;
+
+		if (aRookB & (sqPosB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		attacks |= sqPosB;
+		r -= 1;
+	}
+
+	f = sf - 1;
+	while (f >= 0) {
+		let sq = sr * 8 + f;
+		let sqPosB = 1 << sq;
+
+		if (aRookB & (sqPosB != 0)) {
+			attacks |= sqPosB;
+			break;
+		} else if (sqPosB & (blockboard != 0)) break;
+
+		attacks |= sqPosB;
+
+		f -= 1;
+	}
+	return attacks;
+}
+
+export function getPawnAttacks(square, side) {
+	let sqBitboard = 1 << square;
+	let attacks = 0;
+	// white pawn
+	if (side == 0) {
+		if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile != 0))
+			attacks |= sqBitboard >> 7;
+		if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile != 0))
+			attacks |= sqBitboard >> 9;
+	}
+	// black pawn
+	else {
+		if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile != 0))
+			attacks |= sqBitboard << 9;
+		if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile != 0))
+			attacks |= sqBitboard << 7;
+	}
+	return attacks;
+}
+
+export function getKingAttacks(square) {
+	let sqBitboard = 1 << square;
+	let attacks;
+	// upwards
+	if (sqBitboard >> 8 != 0) attacks |= sqBitboard >> 8;
+	if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile != 0))
+		attacks |= sqBitboard >> 9;
+	if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile != 0))
+		attacks |= sqBitboard >> 7;
+	if ((sqBitboard >> 1) & (FILE_VALIDATION.notHFile != 0))
+		attacks |= sqBitboard >> 1;
+
+	// downwards
+	if (sqBitboard << 8 != 0) attacks |= sqBitboard << 8;
+	if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile != 0))
+		attacks |= sqBitboard << 9;
+	if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile != 0))
+		attacks |= sqBitboard << 7;
+	if ((sqBitboard << 1) & (FILE_VALIDATION.notAFile != 0))
+		attacks |= sqBitboard << 1;
+
+	return attacks;
+}
+
+export function getKnightAttacks(square) {
+	let sqBitboard = 1 << square;
+	let attacks = 0;
+	// upwards
+	if ((sqBitboard >> 15) & (FILE_VALIDATION.FILE_VALIDATION.notAFile != 0))
+		attacks |= sqBitboard >> 15;
+	if ((sqBitboard >> 17) & (FILE_VALIDATION.notHFile != 0))
+		attacks |= sqBitboard >> 17;
+	if ((sqBitboard >> 6) & (FILE_VALIDATION.notABFile != 0))
+		attacks |= sqBitboard >> 6;
+	if ((sqBitboard >> 10) & (FILE_VALIDATION.notHGFile != 0))
+		attacks |= sqBitboard >> 10;
+
+	// downwards
+	if ((sqBitboard << 15) & (FILE_VALIDATION.notHFile != 0))
+		attacks |= sqBitboard << 15;
+	if ((sqBitboard << 17) & (FILE_VALIDATION.notAFile != 0))
+		attacks |= sqBitboard << 17;
+	if ((sqBitboard << 6) & (FILE_VALIDATION.notHGFile != 0))
+		attacks |= sqBitboard << 6;
+	if ((sqBitboard << 10) & (FILE_VALIDATION.notABFile != 0))
+		attacks |= sqBitboard << 10;
+
+	return attacks;
+}
+
 export function isSquareAttacked(
 	square,
 	sourcePiece,
 	bitboards,
 	blockerboard
 ) {}
+
+export function convertMoveObjToMoveValue(move) {
+	let moveValue = 0;
+	moveValue |= move.moveCount << 36;
+	moveValue |= move.gameId << 20;
+	moveValue |= move.side << 17;
+	if (move.moveFlag == MOVE_FLAG.Castle) {
+		moveValue |= 1 << 16;
+	}
+	moveValue |= promotedPiece << 12;
+	moveValue |= targetSq << 6;
+	moveValue |= sourceSq;
+	return moveValue;
+}
 
 export function isMoveValid(move, gameState) {
 	if (gameState.state != 1) {
@@ -660,7 +886,7 @@ export function isMoveValid(move, gameState) {
 				}
 
 				// check whether blocker exists
-				if (((uint(1) << sq) & blockerboard) > 0) {
+				if (((1 << sq) & blockerboard) > 0) {
 					break;
 				}
 
@@ -680,7 +906,7 @@ export function isMoveValid(move, gameState) {
 				}
 
 				// check whether blocker exists
-				if (((uint(1) << sq) & blockerboard) > 0) {
+				if (((1 << sq) & blockerboard) > 0) {
 					break;
 				}
 
@@ -744,7 +970,7 @@ export function isMoveValid(move, gameState) {
 				}
 
 				// check whether blocker exists
-				if (((uint(1) << sq) & blockerboard) > 0) {
+				if (((1 << sq) & blockerboard) > 0) {
 					break;
 				}
 
