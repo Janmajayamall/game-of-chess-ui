@@ -9,7 +9,8 @@ import { DAppProvider } from "@usedapp/core/packages/core";
 import { ChakraProvider } from "@chakra-ui/react";
 
 const client = createClient({
-	url: "https://api.thegraph.com/subgraphs/name/janmajayamall/game-of-chess-subgraph",
+	url:
+		"https://api.thegraph.com/subgraphs/name/janmajayamall/game-of-chess-subgraph",
 });
 
 ReactDOM.render(
