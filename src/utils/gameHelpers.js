@@ -30,6 +30,8 @@ export const FILE_VALIDATION = {
 	notABFile: 18229723555195321596,
 };
 
+export const BIG_0 = BigInt(0);
+
 export const MOVE_FLAG = {
 	NoCastle: 0,
 	Castle: 1,
@@ -38,6 +40,10 @@ export const MOVE_FLAG = {
 
 export function shiftOp(value, shift) {
 	return value * Math.pow(2, shift);
+}
+
+export function sqBoardWithIndex(index) {
+	return BigInt(1) << BigInt(index);
 }
 
 export function getBlockerboard(bitboards) {
@@ -67,10 +73,10 @@ export function getBishopAttacks(
 		let sq = r * 8 + f;
 		let sqPosB = 1 << sq;
 
-		if (sqPosB & (aBishopB != 0)) {
+		if (sqPosB & (aBishopB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		r += 1;
 		f += 1;
@@ -82,10 +88,10 @@ export function getBishopAttacks(
 		let sq = r * 8 + f;
 		let sqPosB = 1 << sq;
 
-		if (sqPosB & (aBishopB != 0)) {
+		if (sqPosB & (aBishopB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		r += 1;
 		f -= 1;
@@ -97,10 +103,10 @@ export function getBishopAttacks(
 		let sq = r * 8 + f;
 		let sqPosB = 1 << sq;
 
-		if (sqPosB & (aBishopB != 0)) {
+		if (sqPosB & (aBishopB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		f += 1;
 		r -= 1;
@@ -112,10 +118,10 @@ export function getBishopAttacks(
 		let sq = r * 8 + f;
 		let sqPosB = 1 << sq;
 
-		if (sqPosB & (aBishopB != 0)) {
+		if (sqPosB & (aBishopB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		r -= 1;
 		f -= 1;
@@ -137,10 +143,10 @@ export function getRookAttacks(attackingPiece, square, blockboard, bitboards) {
 		let sq = r * 8 + sf;
 		let sqPosB = 1 << sq;
 
-		if (aRookB & (sqPosB != 0)) {
+		if (aRookB & (sqPosB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		r += 1;
 	}
@@ -150,10 +156,10 @@ export function getRookAttacks(attackingPiece, square, blockboard, bitboards) {
 		let sq = sr * 8 + f;
 		let sqPosB = 1 << sq;
 
-		if (aRookB & (sqPosB != 0)) {
+		if (aRookB & (sqPosB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		attacks |= sqPosB;
 		f += 1;
@@ -164,10 +170,10 @@ export function getRookAttacks(attackingPiece, square, blockboard, bitboards) {
 		let sq = r * 8 + sf;
 		let sqPosB = 1 << sq;
 
-		if (aRookB & (sqPosB != 0)) {
+		if (aRookB & (sqPosB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		attacks |= sqPosB;
 		r -= 1;
@@ -178,10 +184,10 @@ export function getRookAttacks(attackingPiece, square, blockboard, bitboards) {
 		let sq = sr * 8 + f;
 		let sqPosB = 1 << sq;
 
-		if (aRookB & (sqPosB != 0)) {
+		if (aRookB & (sqPosB !== 0)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard != 0)) break;
+		} else if (sqPosB & (blockboard !== 0)) break;
 
 		attacks |= sqPosB;
 
@@ -195,16 +201,16 @@ export function getPawnAttacks(square, side) {
 	let attacks = 0;
 	// white pawn
 	if (side === 0) {
-		if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile != 0))
+		if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile !== 0))
 			attacks |= sqBitboard >> 7;
-		if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile != 0))
+		if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile !== 0))
 			attacks |= sqBitboard >> 9;
 	}
 	// black pawn
 	else {
-		if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile != 0))
+		if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile !== 0))
 			attacks |= sqBitboard << 9;
-		if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile != 0))
+		if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile !== 0))
 			attacks |= sqBitboard << 7;
 	}
 	return attacks;
@@ -214,21 +220,21 @@ export function getKingAttacks(square) {
 	let sqBitboard = 1 << square;
 	let attacks;
 	// upwards
-	if (sqBitboard >> 8 != 0) attacks |= sqBitboard >> 8;
-	if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile != 0))
+	if (sqBitboard >> 8 !== 0) attacks |= sqBitboard >> 8;
+	if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile !== 0))
 		attacks |= sqBitboard >> 9;
-	if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile != 0))
+	if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile !== 0))
 		attacks |= sqBitboard >> 7;
-	if ((sqBitboard >> 1) & (FILE_VALIDATION.notHFile != 0))
+	if ((sqBitboard >> 1) & (FILE_VALIDATION.notHFile !== 0))
 		attacks |= sqBitboard >> 1;
 
 	// downwards
-	if (sqBitboard << 8 != 0) attacks |= sqBitboard << 8;
-	if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile != 0))
+	if (sqBitboard << 8 !== 0) attacks |= sqBitboard << 8;
+	if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile !== 0))
 		attacks |= sqBitboard << 9;
-	if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile != 0))
+	if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile !== 0))
 		attacks |= sqBitboard << 7;
-	if ((sqBitboard << 1) & (FILE_VALIDATION.notAFile != 0))
+	if ((sqBitboard << 1) & (FILE_VALIDATION.notAFile !== 0))
 		attacks |= sqBitboard << 1;
 
 	return attacks;
@@ -238,23 +244,23 @@ export function getKnightAttacks(square) {
 	let sqBitboard = 1 << square;
 	let attacks = 0;
 	// upwards
-	if ((sqBitboard >> 15) & (FILE_VALIDATION.FILE_VALIDATION.notAFile != 0))
+	if ((sqBitboard >> 15) & (FILE_VALIDATION.FILE_VALIDATION.notAFile !== 0))
 		attacks |= sqBitboard >> 15;
-	if ((sqBitboard >> 17) & (FILE_VALIDATION.notHFile != 0))
+	if ((sqBitboard >> 17) & (FILE_VALIDATION.notHFile !== 0))
 		attacks |= sqBitboard >> 17;
-	if ((sqBitboard >> 6) & (FILE_VALIDATION.notABFile != 0))
+	if ((sqBitboard >> 6) & (FILE_VALIDATION.notABFile !== 0))
 		attacks |= sqBitboard >> 6;
-	if ((sqBitboard >> 10) & (FILE_VALIDATION.notHGFile != 0))
+	if ((sqBitboard >> 10) & (FILE_VALIDATION.notHGFile !== 0))
 		attacks |= sqBitboard >> 10;
 
 	// downwards
-	if ((sqBitboard << 15) & (FILE_VALIDATION.notHFile != 0))
+	if ((sqBitboard << 15) & (FILE_VALIDATION.notHFile !== 0))
 		attacks |= sqBitboard << 15;
-	if ((sqBitboard << 17) & (FILE_VALIDATION.notAFile != 0))
+	if ((sqBitboard << 17) & (FILE_VALIDATION.notAFile !== 0))
 		attacks |= sqBitboard << 17;
-	if ((sqBitboard << 6) & (FILE_VALIDATION.notHGFile != 0))
+	if ((sqBitboard << 6) & (FILE_VALIDATION.notHGFile !== 0))
 		attacks |= sqBitboard << 6;
-	if ((sqBitboard << 10) & (FILE_VALIDATION.notABFile != 0))
+	if ((sqBitboard << 10) & (FILE_VALIDATION.notABFile !== 0))
 		attacks |= sqBitboard << 10;
 
 	return attacks;
@@ -273,7 +279,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	// check black pawn attacks on sq
 	if (
 		side === 0 &&
-		getPawnAttacks(square, side) & (bitboards[PIECE.p] != 0)
+		getPawnAttacks(square, side) & (bitboards[PIECE.p] !== 0)
 	) {
 		return true;
 	}
@@ -281,7 +287,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	// check white pawn attacks on sq
 	if (
 		side === 1 &&
-		getPawnAttacks(square, side) & (bitboards[PIECE.P] != 0)
+		getPawnAttacks(square, side) & (bitboards[PIECE.P] !== 0)
 	) {
 		return true;
 	}
@@ -289,7 +295,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	// check kings attacks on sq
 	if (
 		getKingAttacks(square) &
-		((side === 0 ? bitboards[PIECE.k] : bitboards[PIECE.K]) != 0)
+		((side === 0 ? bitboards[PIECE.k] : bitboards[PIECE.K]) !== 0)
 	) {
 		return true;
 	}
@@ -297,7 +303,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	// check knight attacks on sq
 	if (
 		getKnightAttacks(square) &
-		((side === 0 ? bitboards[PIECE.n] : bitboards[PIECE.N]) != 0)
+		((side === 0 ? bitboards[PIECE.n] : bitboards[PIECE.N]) !== 0)
 	) {
 		return true;
 	}
@@ -309,7 +315,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 		blockboard,
 		bitboards
 	);
-	if (bishopAttacks != 0) {
+	if (bishopAttacks !== 0) {
 		return true;
 	}
 
@@ -320,7 +326,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 		blockboard,
 		bitboards
 	);
-	if (rookAttacks != 0) {
+	if (rookAttacks !== 0) {
 		return true;
 	}
 
@@ -338,7 +344,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 			blockboard,
 			bitboards
 		);
-	if (queenAttacks != 0) {
+	if (queenAttacks !== 0) {
 		return true;
 	}
 
@@ -360,15 +366,15 @@ export function convertMoveObjToMoveValue(move) {
 }
 
 export function isMoveValid(move, gameState) {
-	if (gameState.state != 1) {
+	if (gameState.state !== 1) {
 		return false;
 	}
 
-	if (move.side != gameState.side) {
+	if (move.side !== gameState.side) {
 		return false;
 	}
 
-	if (gameState.moveCount + 1 != move.moveCount) {
+	if (gameState.moveCount + 1 !== move.moveCount) {
 		return false;
 	}
 
@@ -385,7 +391,7 @@ export function isMoveValid(move, gameState) {
 	// target piece cannot be of playiing side
 	if (
 		gameState.side === 0 &&
-		move.targetPiece != PIECE.uk &&
+		move.targetPiece !== PIECE.uk &&
 		move.targetPiece >= 6
 	) {
 		return false;
@@ -397,19 +403,19 @@ export function isMoveValid(move, gameState) {
 	let blockerboard = getBlockerboard(gameState.bitboards);
 
 	if (move.moveFlag === MOVE_FLAG.Castle) {
-		if (move.sourcePiece != PIECE.K && move.sourcePiece != PIECE.k) {
+		if (move.sourcePiece !== PIECE.K && move.sourcePiece !== PIECE.k) {
 			return false;
 		}
 
 		// white king
 		if (move.sourcePiece === PIECE.K) {
 			// king should be on original pos
-			if (move.sourceSq != 60) {
+			if (move.sourceSq !== 60) {
 				return false;
 			}
 
 			// targetSq can only be 62 or 58
-			if (move.targetSq != 62 && move.targetSq != 58) {
+			if (move.targetSq !== 62 && move.targetSq !== 58) {
 				return false;
 			}
 
@@ -450,8 +456,8 @@ export function isMoveValid(move, gameState) {
 
 				// passage should be empty
 				if (
-					(1 << 61) & (blockerboard != 0) ||
-					(1 << 62) & (blockerboard != 0)
+					((1 << 61) & blockerboard) !== 0 ||
+					((1 << 62) & blockerboard) !== 0
 				) {
 					return false;
 				}
@@ -494,9 +500,9 @@ export function isMoveValid(move, gameState) {
 
 				// passage should be empty
 				if (
-					(1 << 57) & (blockerboard != 0) ||
-					(1 << 58) & (blockerboard != 0) ||
-					(1 << 59) & (blockerboard != 0)
+					((1 << 57) & blockerboard) !== 0 ||
+					((1 << 58) & blockerboard) !== 0 ||
+					((1 << 59) & blockerboard) !== 0
 				) {
 					return false;
 				}
@@ -506,12 +512,12 @@ export function isMoveValid(move, gameState) {
 		// black king
 		if (move.sourcePiece === PIECE.k) {
 			// king should on original pos
-			if (move.sourceSq != 4) {
+			if (move.sourceSq !== 4) {
 				return false;
 			}
 
 			// targetSq can only be 2 or 6
-			if (move.targetSq != 2 && move.targetSq != 6) {
+			if (move.targetSq !== 2 && move.targetSq !== 6) {
 				return false;
 			}
 
@@ -552,8 +558,8 @@ export function isMoveValid(move, gameState) {
 
 				// passage should be empty
 				if (
-					(1 << 5) & (blockerboard != 0) ||
-					(1 << 6) & (blockerboard != 0)
+					(1 << 5) & (blockerboard !== 0) ||
+					(1 << 6) & (blockerboard !== 0)
 				) {
 					return false;
 				}
@@ -596,9 +602,9 @@ export function isMoveValid(move, gameState) {
 
 				// passage should be empty
 				if (
-					(1 << 3) & (blockerboard != 0) ||
-					(1 << 2) & (blockerboard != 0) ||
-					(1 << 1) & (blockerboard != 0)
+					(1 << 3) & (blockerboard !== 0) ||
+					(1 << 2) & (blockerboard !== 0) ||
+					(1 << 1) & (blockerboard !== 0)
 				) {
 					return false;
 				}
@@ -613,10 +619,10 @@ export function isMoveValid(move, gameState) {
 	) {
 		// moveBy can only be 8, 9, 7, 1
 		if (
-			move.moveBySq != 8 &&
-			move.moveBySq != 9 &&
-			move.moveBySq != 7 &&
-			move.moveBySq != 1
+			move.moveBySq !== 8 &&
+			move.moveBySq !== 9 &&
+			move.moveBySq !== 7 &&
+			move.moveBySq !== 1
 		) {
 			return false;
 		}
@@ -680,10 +686,10 @@ export function isMoveValid(move, gameState) {
 		move.moveFlag === MOVE_FLAG.NoFlag
 	) {
 		if (
-			move.moveBySq != 17 &&
-			move.moveBySq != 15 &&
-			move.moveBySq != 6 &&
-			move.moveBySq != 10
+			move.moveBySq !== 17 &&
+			move.moveBySq !== 15 &&
+			move.moveBySq !== 6 &&
+			move.moveBySq !== 10
 		) {
 			return false;
 		}
@@ -783,8 +789,8 @@ export function isMoveValid(move, gameState) {
 	) {
 		// white pawns can only move upwards & black pawns can only move downwards
 		if (
-			(move.sourcePiece != PIECE.P || move.moveLeftShift != false) &&
-			(move.sourcePiece != PIECE.p || move.moveLeftShift != true)
+			(move.sourcePiece !== PIECE.P || move.moveLeftShift !== false) &&
+			(move.sourcePiece !== PIECE.p || move.moveLeftShift !== true)
 		) {
 			return false;
 		}
@@ -794,7 +800,7 @@ export function isMoveValid(move, gameState) {
 			// can only move diagonal if target piece present || it is a enpassant sq
 			if (
 				move.targetPiece === PIECE.uk &&
-				move.targetSq != gameState.enpassantSq
+				move.targetSq !== gameState.enpassantSq
 			) {
 				return false;
 			}
@@ -844,7 +850,7 @@ export function isMoveValid(move, gameState) {
 			}
 		} else if (move.moveBySq === 8) {
 			// targetSq should be empty
-			if (move.targetPiece != PIECE.uk) {
+			if (move.targetPiece !== PIECE.uk) {
 				return false;
 			}
 
@@ -859,7 +865,7 @@ export function isMoveValid(move, gameState) {
 			}
 		} else if (move.moveBySq === 16) {
 			// target sq should be empty
-			if (move.targetPiece != PIECE.uk) {
+			if (move.targetPiece !== PIECE.uk) {
 				return false;
 			}
 
@@ -867,9 +873,9 @@ export function isMoveValid(move, gameState) {
 			// 71776119061217280 is initial pos of white pawns on board
 			// 65280 is initial pos of black pawns on board
 			if (
-				(move.sourcePiece != PIECE.P ||
+				(move.sourcePiece !== PIECE.P ||
 					move.sourcePieceBitBoard & (71776119061217280 === 0)) &&
-				(move.sourcePiece != PIECE.p ||
+				(move.sourcePiece !== PIECE.p ||
 					move.sourcePieceBitBoard & (65280 === 0))
 			) {
 				return false;
@@ -893,8 +899,8 @@ export function isMoveValid(move, gameState) {
 
 			// white cannot promote black pice & vice versa
 			if (
-				(move.sourcePiece != PIECE.P || move.promotedToPiece < 6) &&
-				(move.sourcePiece != PIECE.p || move.promotedToPiece >= 6)
+				(move.sourcePiece !== PIECE.P || move.promotedToPiece < 6) &&
+				(move.sourcePiece !== PIECE.p || move.promotedToPiece >= 6)
 			) {
 				return false;
 			}
@@ -902,8 +908,8 @@ export function isMoveValid(move, gameState) {
 			// current rank should be 1 or 6
 			let rank = move.sourceSq / 8;
 			if (
-				(move.sourcePiece != PIECE.P || rank != 1) &&
-				(move.sourcePiece != PIECE.p || rank != 6)
+				(move.sourcePiece !== PIECE.P || rank !== 1) &&
+				(move.sourcePiece !== PIECE.p || rank !== 6)
 			) {
 				return false;
 			}
@@ -916,8 +922,8 @@ export function isMoveValid(move, gameState) {
 			move.sourcePiece === PIECE.b ||
 			// queen moves like a bishop if both rank and file of source & target don't match
 			((move.sourcePiece === PIECE.Q || move.sourcePiece === PIECE.q) &&
-				move.sourceSq % 8 != move.targetSq % 8 &&
-				move.sourceSq / 8 != move.targetSq / 8)) &&
+				move.sourceSq % 8 !== move.targetSq % 8 &&
+				move.sourceSq / 8 !== move.targetSq / 8)) &&
 		move.moveFlag === PIECE.NoFlag
 	) {
 		let sr = move.sourceSq / 8;
@@ -1054,7 +1060,7 @@ export function isMoveValid(move, gameState) {
 			}
 		}
 
-		if (sr === tr && sf > tf && sf != 0) {
+		if (sr === tr && sf > tf && sf !== 0) {
 			let f = sf - 1;
 			while (f >= 0) {
 				let sq = sr * 8 + f;
@@ -1169,11 +1175,10 @@ export function parseGameStateToFenString(gameState) {
 	}
 	console.log(boardMap);
 	for (let pIndex = 0; pIndex < 12; pIndex++) {
-		let board = BigInt(gameState.bitboards[pIndex]);
-		console.log(pIndex, board, shiftOp(1, 53));
+		let board = gameState.bitboards[pIndex];
 		let d = "";
 		for (let index = 0; index < 64; index++) {
-			if ((board & (BigInt(1) << BigInt(index))) != 0) {
+			if ((board & sqBoardWithIndex(index)) !== BIG_0) {
 				boardMap[index] = pIndex;
 				d += `1`;
 			} else {
@@ -1188,8 +1193,8 @@ export function parseGameStateToFenString(gameState) {
 	// convert board map to string
 	let emptySquares = 0;
 	for (let index = 0; index < 64; index++) {
-		if (index % 8 === 0 && index != 0) {
-			if (emptySquares != 0) {
+		if (index % 8 === 0 && index !== 0) {
+			if (emptySquares !== 0) {
 				fen += `${emptySquares}`;
 				emptySquares = 0;
 			}
@@ -1201,7 +1206,7 @@ export function parseGameStateToFenString(gameState) {
 			emptySquares += 1;
 		} else {
 			// append accumulated empty squares
-			if (emptySquares != 0) {
+			if (emptySquares !== 0) {
 				fen += `${emptySquares}`;
 				emptySquares = 0;
 			}

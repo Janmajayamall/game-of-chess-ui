@@ -9,16 +9,23 @@ function App() {
 	if (!result.data || !result.data.game) {
 		return <div />;
 	}
-	console.log(result.data.game);
+
+	const gameState = {
+		...result.data.game,
+		bitboards: result.data.game.bitboards.map((board) => BigInt(board)),
+	};
+
+	console.log(gameState);
 
 	return (
 		<div className="App">
 			<Chessboard
 				arePiecesDraggable={false}
-				position={parseGameStateToFenString(result.data.game)}
+				position={parseGameStateToFenString(gameState)}
 			/>
 		</div>
 	);
 }
 
 export default App;
+/* global BigInt */
