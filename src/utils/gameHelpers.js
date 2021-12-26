@@ -23,20 +23,6 @@ export const PIECE = {
 	uk: 12,
 };
 
-/**
- *
- * GameState
- * bitboards
- * castle rights
- * enpassant sqaure
- * move count & halfmove count
- * and rest same is sol
- *
- * Move
- * side, moveCount
- *
- */
-
 export const FILE_VALIDATION = {
 	notAFile: 18374403900871474942,
 	notHFile: 9187201950435737471,
@@ -1092,4 +1078,132 @@ export function isMoveValid(move, gameState) {
 	}
 
 	return true;
+}
+
+export function parseIntToPieceChar(val) {
+	if (val >= 12) {
+		return "";
+	}
+
+	if (val == 0) {
+		return "p";
+	}
+	if (val == 1) {
+		return "n";
+	}
+	if (val == 2) {
+		return "b";
+	}
+	if (val == 3) {
+		return "r";
+	}
+	if (val == 4) {
+		return "q";
+	}
+	if (val == 5) {
+		return "k";
+	}
+	if (val == 6) {
+		return "P";
+	}
+	if (val == 7) {
+		return "N";
+	}
+	if (val == 8) {
+		return "B";
+	}
+	if (val == 9) {
+		return "R";
+	}
+	if (val == 10) {
+		return "Q";
+	}
+	if (val == 11) {
+		return "K";
+	}
+}
+
+export function parseGameStateToFenString(gameState) {
+	let boardMap = [];
+
+	// make every index 12 for identifying empty squares
+	for (let index = 0; index < 64; index++) {
+		boardMap[index] = 12;
+	}
+
+	for (let pIndex = 0; pIndex < 12; pIndex++) {
+		let board = gameState.bitboards[pIndex];
+		for (let index = 0; index < 64; index++) {
+			if (board & (1 << index != 0)) {
+				boardMap[index] = pIndex;
+			}
+		}
+	}
+
+	// convert board map to string
+	let emptySquares = 0;
+	for (let index = 0; index < 64; index++) {
+		if (index % 8 == 0 && index != 0) {
+			if (emptySquares != 0) {
+				fen += `${emptySquares}`;
+				emptySquares = 0;
+			}
+			fen += `/`;
+		}
+
+		// check empty squares
+		if (boardMap[index] == 12) {
+			emptySquares += 1;
+		} else {
+			// append accumulated empty squares
+			if (emptySquares != 0) {
+				fen += `${emptySquares}`;
+				emptySquares = 0;
+			}
+			// append piece char
+			fen += `${parseIntToPieceChar(boardMap[index])}`;
+		}
+	}
+
+	// side
+	if (gameState.side == 0) {
+		fen += " w ";
+	} else {
+		fen += " b ";
+	}
+
+	// castling rights
+	let castlingAdded = false;
+	if (gameState.wkC == true) {
+		fen += "K";
+		castlingAdded = true;
+	}
+	if (gameState.wqC == true) {
+		fen += "Q";
+		castlingAdded = true;
+	}
+	if (gameState.bkC == true) {
+		fen += "k";
+		castlingAdded = true;
+	}
+	if (gameState.bqC == true) {
+		fen += "q";
+		castlingAdded = true;
+	}
+	if (castlingAdded == false) {
+		fen += "-";
+	}
+
+	// enpassant sq
+	if (gameState.enpassantSq > 0) {
+		fen += ` ${gameState.enpassantSq} `;
+	} else {
+		fen += " - ";
+	}
+
+	// half move count
+	fen += `${gameState.halfMoveCount} `;
+
+	// moves
+	fen += `${gameState.moveCount / 2}`;
 }
