@@ -270,12 +270,84 @@ export function getKnightAttacks(square) {
 	return attacks;
 }
 
-export function isSquareAttacked(
-	square,
-	sourcePiece,
-	bitboards,
-	blockerboard
-) {}
+export function isSquareAttacked(square, piece, bitboards, blockboard) {
+	if (piece == PIECE.uk) {
+		return false;
+	}
+
+	let side;
+	if (piece < 6) {
+		side = 1;
+	}
+
+	// check black pawn attacks on sq
+	if (side == 0 && getPawnAttacks(square, side) & (bitboards[PIECE.p] != 0)) {
+		return true;
+	}
+
+	// check white pawn attacks on sq
+	if (side == 1 && getPawnAttacks(square, side) & (bitboards[PIECE.P] != 0)) {
+		return true;
+	}
+
+	// check kings attacks on sq
+	if (
+		getKingAttacks(square) &
+		((side == 0 ? bitboards[PIECE.k] : bitboards[PIECE.K]) != 0)
+	) {
+		return true;
+	}
+
+	// check knight attacks on sq
+	if (
+		getKnightAttacks(square) &
+		((side == 0 ? bitboards[PIECE.n] : bitboards[PIECE.N]) != 0)
+	) {
+		return true;
+	}
+
+	// bishop attacks on sq
+	let bishopAttacks = getBishopAttacks(
+		side == 0 ? PIECE.b : PIECE.B,
+		square,
+		blockboard,
+		bitboards
+	);
+	if (bishopAttacks != 0) {
+		return true;
+	}
+
+	// rook attacks on sq
+	let rookAttacks = getRookAttacks(
+		side == 0 ? PIECE.r : PIECE.R,
+		square,
+		blockboard,
+		bitboards
+	);
+	if (rookAttacks != 0) {
+		return true;
+	}
+
+	// queen attacks on sq
+	let queenAttacks =
+		getBishopAttacks(
+			side == 0 ? PIECE.q : PIECE.Q,
+			square,
+			blockboard,
+			bitboards
+		) |
+		getRookAttacks(
+			side == 0 ? PIECE.q : PIECE.Q,
+			square,
+			blockboard,
+			bitboards
+		);
+	if (queenAttacks != 0) {
+		return true;
+	}
+
+	return false;
+}
 
 export function convertMoveObjToMoveValue(move) {
 	let moveValue = 0;
