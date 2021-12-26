@@ -409,8 +409,8 @@ export function isMoveValid(move, gameState) {
                 // pawn shouldn't have moved before
                 // 71776119061217280 is initial pos of white pawns on board
                 // 65280 is initial pos of black pawns on board
-                if ((move.sourcePiece != IGocDataTypes.Piece.P || move.sourcePieceBitBoard & 71776119061217280 == 0) && 
-                    (move.sourcePiece != IGocDataTypes.Piece.p || move.sourcePieceBitBoard & 65280 == 0) 
+                if ((move.sourcePiece != PIECE.P || move.sourcePieceBitBoard & 71776119061217280 == 0) && 
+                    (move.sourcePiece != PIECE.p || move.sourcePieceBitBoard & 65280 == 0) 
                 ){
                     return false;
                 }
@@ -420,26 +420,26 @@ export function isMoveValid(move, gameState) {
             }
 
             // check for promotion
-            if (move.moveFlag == IGocDataTypes.MoveFlag.PawnPromotion){
+            if (move.moveFlag == MOVE_FLAG.PawnPromotion){
                 // promoted piece cannot be unkown, pawn, or king
                 if (
-                    move.promotedToPiece == IGocDataTypes.Piece.uk || 
-                    move.promotedToPiece == IGocDataTypes.Piece.p || 
-                    move.promotedToPiece == IGocDataTypes.Piece.P || 
-                    move.promotedToPiece == IGocDataTypes.Piece.k || 
-                    move.promotedToPiece == IGocDataTypes.Piece.K  
+                    move.promotedToPiece == PIECE.uk || 
+                    move.promotedToPiece == PIECE.p || 
+                    move.promotedToPiece == PIECE.P || 
+                    move.promotedToPiece == PIECE.k || 
+                    move.promotedToPiece == PIECE.K  
                 ){
                     return false;
                 }
 
                 // white cannot promote black pice & vice versa
-                if ((move.sourcePiece != IGocDataTypes.Piece.P || uint(move.promotedToPiece) < 6) && (move.sourcePiece != IGocDataTypes.Piece.p || uint(move.promotedToPiece) >= 6)){
+                if ((move.sourcePiece != PIECE.P || move.promotedToPiece < 6) && (move.sourcePiece != PIECE.p || move.promotedToPiece >= 6)){
                     return false;
                 }
 
                 // current rank should be 1 or 6
-                uint rank = move.sourceSq / 8;
-                if ((move.sourcePiece != IGocDataTypes.Piece.P || rank != 1) && (move.sourcePiece != IGocDataTypes.Piece.p || rank != 6)){
+                let rank = move.sourceSq / 8;
+                if ((move.sourcePiece != PIECE.P || rank != 1) && (move.sourcePiece != PIECE.p || rank != 6)){
                     return false;
                 }
             }
@@ -459,7 +459,7 @@ export function isMoveValid(move, gameState) {
             && move.moveFlag == IGocDataTypes.MoveFlag.NoFlag
             ) 
         {
-            uint sr = move.sourceSq / 8; 
+            let sr = move.sourceSq / 8; 
             uint sf = move.sourceSq % 8;
             uint tr = move.targetSq / 8; 
             uint tf = move.targetSq % 8;
