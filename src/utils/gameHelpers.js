@@ -33,7 +33,7 @@ export const FILE_VALIDATION = {
 export const BIG_0 = BigInt(0);
 
 export const MOVE_FLAG = {
-	NoCastle: 0,
+	NoFlag: 0,
 	Castle: 1,
 	PawnPromotion: 2,
 };
@@ -351,21 +351,131 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	return false;
 }
 
-export function convertMoveObjToMoveValue(move) {
-	let moveValue = 0;
-	moveValue |= move.moveCount << 36;
-	moveValue |= move.gameId << 20;
-	moveValue |= move.side << 17;
-	if (move.moveFlag === MOVE_FLAG.Castle) {
-		moveValue |= 1 << 16;
-	}
-	moveValue |= move.promotedPiece << 12;
-	moveValue |= move.targetSq << 6;
-	moveValue |= move.sourceSq;
+export function encodeValuesToMoveValue(
+	sourceSq,
+	targetSq,
+	promotedPiece,
+	isCastle,
+	side,
+	gameId,
+	moveCount
+) {
+	let moveValue = BigInt(0);
+	moveValue = moveValue | BigInt(sourceSq);
+	moveValue = moveValue | (BigInt(targetSq) << BigInt(6));
+	moveValue = moveValue | (BigInt(promotedPiece) << BigInt(12));
+	if (isCastle === true) moveValue = moveValue | (BigInt(1) << BigInt(16));
+	moveValue = moveValue | (BigInt(side) << BigInt(17));
+	moveValue = moveValue | (BigInt(gameId) << BigInt(20));
+	moveValue = moveValue | (BigInt(moveCount + 1) << BigInt(36));
 	return moveValue;
 }
 
-export function isMoveValid(move, gameState) {
+export function decodeMoveToMoveObj(moveValue, bitboards) {
+	let sourceSq = moveValue & BigInt(63);
+	let targetSq = (moveValue >> BigInt(6)) & BigInt(63);
+	let side = (moveValue >> BigInt(17)) & BigInt(1);
+	let gameId = moveValue >> BigInt(20);
+	let moveCount = moveValue >> BigInt(36);
+
+	// flags
+	let pawnPromotion = (moveValue >> BigInt(12)) & BigInt(15);
+	let castleFlag = (moveValue >> BigInt(16)) & BigInt(1);
+
+	console.log(moveCount);
+
+	// set flags
+	if (
+		!(
+			(pawnPromotion > BigInt(0) &&
+				pawnPromotion < BigInt(12) &&
+				castleFlag == BigInt(0)) ||
+			pawnPromotion == BigInt(0)
+		)
+	) {
+		return {
+			move: {},
+			err: true,
+		};
+	}
+	let moveFlag = MOVE_FLAG.NoFlag;
+	let promotedToPiece = PIECE.uk;
+	if (pawnPromotion != 0) {
+		moveFlag = MOVE_FLAG.PawnPromotion;
+		promotedToPiece = pawnPromotion;
+	}
+	if (castleFlag == 1) {
+		moveFlag = MOVE_FLAG.Castle;
+	}
+	console.log("MOVE FLAG", moveFlag, MOVE_FLAG.NoFlag);
+
+	// set squares
+	let moveBySq = 0;
+	let moveLeftShift = false;
+	if (targetSq > sourceSq) {
+		moveBySq = targetSq - sourceSq;
+		moveLeftShift = true;
+	} else if (targetSq < sourceSq) {
+		moveBySq = sourceSq - targetSq;
+		moveLeftShift = false;
+	}
+	if (targetSq === sourceSq) {
+		console.log(" mk m ");
+		return {
+			move: {},
+			err: true,
+		};
+	}
+
+	// set pieces
+	let sourcePiece = PIECE.uk;
+	let targetPiece = PIECE.uk;
+	let sourcePieceBitBoard = BigInt(1) << sourceSq;
+	let targetPieceBitBoard = BigInt(1) << targetSq;
+	for (let index = 0; index < bitboards.length; index++) {
+		let board = bitboards[index];
+		if ((sourcePieceBitBoard & board) > 0) {
+			sourcePiece = index;
+		}
+		if ((targetPieceBitBoard & board) > 0) {
+			targetPiece = index;
+		}
+	}
+	if (sourcePiece === PIECE.uk) {
+		return {
+			move: {},
+			err: true,
+		};
+	}
+
+	return {
+		move: {
+			sourceSq,
+			targetSq,
+			side,
+			gameId,
+			moveCount,
+			moveFlag,
+			promotedToPiece,
+			moveBySq,
+			moveLeftShift,
+			sourcePiece,
+			targetPiece,
+			sourcePieceBitBoard,
+			targetPieceBitBoard,
+		},
+		err: false,
+	};
+}
+
+export function isMoveValid(moveValue, gameState) {
+	const d = decodeMoveToMoveObj(moveValue, gameState.bitboards);
+	const { move, err } = d;
+	console.log(d, " om");
+	if (err === true) {
+		return false;
+	}
+
 	if (gameState.state !== 1) {
 		return false;
 	}

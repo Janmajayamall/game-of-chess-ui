@@ -2,7 +2,12 @@ import logo from "./logo.svg";
 import "./App.css";
 import { Chessboard } from "react-chessboard";
 import { useQueryGame } from "./hooks/useQuery";
-import { parseGameStateToFenString } from "./utils/gameHelpers";
+import {
+	isMoveValid,
+	MOVE_FLAG,
+	parseGameStateToFenString,
+	encodeValuesToMoveValue,
+} from "./utils/gameHelpers";
 import { NumberInput, Flex, NumberInputField, Button } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -22,19 +27,20 @@ function App() {
 		...result.data.game,
 		bitboards: result.data.game.bitboards.map((board) => BigInt(board)),
 	};
-	// console.log(gameState);
 
-	function encodeInputsToMoveValue() {
-		let moveValue = BigInt(0);
-		moveValue = moveValue | BigInt(sourceSq);
-		moveValue = moveValue | (BigInt(targetSq) << BigInt(6));
-		moveValue = moveValue | (BigInt(promotedPiece) << BigInt(12));
-		moveValue = moveValue | (BigInt(castleFlag) << BigInt(16));
-		moveValue = moveValue | (BigInt(gameState.side) << BigInt(17));
-		moveValue = moveValue | (BigInt(gameState.gameId) << BigInt(20));
-		moveValue = moveValue | (BigInt(gameState.moveCount + 1) << BigInt(36));
-		console.log(moveValue);
-	}
+	const moveValue = encodeValuesToMoveValue(
+		sourceSq,
+		targetSq,
+		promotedPiece,
+		false,
+		gameState.side,
+		gameState.gameId,
+		gameState.moveCount + 1
+	);
+
+	const isValidMove = isMoveValid(moveValue, gameState);
+
+	console.log(moveValue, isValidMove);
 
 	return (
 		<div className="App">
@@ -76,13 +82,7 @@ function App() {
 					>
 						<NumberInputField />
 					</NumberInput>
-					<Button
-						onClick={() => {
-							encodeInputsToMoveValue();
-						}}
-						colorScheme="teal"
-						size="xs"
-					>
+					<Button onClick={() => {}} colorScheme="teal" size="xs">
 						Move
 					</Button>
 				</Flex>
