@@ -1173,7 +1173,7 @@ export function parseGameStateToFenString(gameState) {
 	for (let index = 0; index < 64; index++) {
 		boardMap.push(12);
 	}
-	console.log(boardMap);
+
 	for (let pIndex = 0; pIndex < 12; pIndex++) {
 		let board = gameState.bitboards[pIndex];
 		let d = "";
@@ -1185,10 +1185,7 @@ export function parseGameStateToFenString(gameState) {
 				d += `0`;
 			}
 		}
-		console.log(d);
-		console.log("mk");
 	}
-	console.log(boardMap);
 
 	// convert board map to string
 	let emptySquares = 0;
@@ -1257,7 +1254,6 @@ export function parseGameStateToFenString(gameState) {
 	// moves
 	fen += `${gameState.moveCount / 2}`;
 
-	console.log(fen);
 	return fen;
 }
 
