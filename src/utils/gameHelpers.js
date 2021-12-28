@@ -8,46 +8,40 @@ export function parseBoardString(boardString) {
 }
 
 export const PIECE = {
-	p: 0,
-	n: 1,
-	b: 2,
-	r: 3,
-	q: 4,
-	k: 5,
-	P: 6,
-	N: 7,
-	B: 8,
-	R: 9,
-	Q: 10,
-	K: 11,
-	uk: 12,
+	p: 0n,
+	n: 1n,
+	b: 2n,
+	r: 3n,
+	q: 4n,
+	k: 5n,
+	P: 6n,
+	N: 7n,
+	B: 8n,
+	R: 9n,
+	Q: 10n,
+	K: 11n,
+	uk: 12n,
 };
 
 export const FILE_VALIDATION = {
-	notAFile: 18374403900871474942,
-	notHFile: 9187201950435737471,
-	notHGFile: 4557430888798830399,
-	notABFile: 18229723555195321596,
+	notAFile: 18374403900871474942n,
+	notHFile: 9187201950435737471n,
+	notHGFile: 4557430888798830399n,
+	notABFile: 18229723555195321596n,
 };
-
-export const BIG_0 = BigInt(0);
 
 export const MOVE_FLAG = {
-	NoFlag: 0,
-	Castle: 1,
-	PawnPromotion: 2,
+	NoFlag: 0n,
+	Castle: 1n,
+	PawnPromotion: 2n,
 };
 
-export function shiftOp(value, shift) {
-	return value * Math.pow(2, shift);
-}
-
 export function sqBoardWithIndex(index) {
-	return BigInt(1) << BigInt(index);
+	return 1n << BigInt(index);
 }
 
 export function getBlockerboard(bitboards) {
-	let blockerboard = 0;
+	let blockerboard = 0n;
 	bitboards.forEach((board) => {
 		blockerboard = blockerboard | board;
 	});
@@ -60,208 +54,208 @@ export function getBishopAttacks(
 	blockboard,
 	bitboards
 ) {
-	let sr = square / 8;
-	let sf = square % 8;
+	let sr = square / 8n;
+	let sf = square % 8n;
 
-	let r = sr + 1;
-	let f = sf + 1;
+	let r = sr + 1n;
+	let f = sf + 1n;
 
 	// potential attacking sqaures
 	let aBishopB = bitboards[attackingPiece];
-	let attacks = 0;
-	while (r <= 7 && f <= 7) {
-		let sq = r * 8 + f;
-		let sqPosB = 1 << sq;
+	let attacks = 0n;
+	while (r <= 7n && f <= 7n) {
+		let sq = r * 8n + f;
+		let sqPosB = 1n << sq;
 
-		if (sqPosB & (aBishopB !== 0)) {
+		if (sqPosB & (aBishopB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
-		r += 1;
-		f += 1;
+		r += 1n;
+		f += 1n;
 	}
 
-	r = sr + 1;
-	f = sf - 1;
-	while (r <= 7 && f >= 0) {
-		let sq = r * 8 + f;
-		let sqPosB = 1 << sq;
+	r = sr + 1n;
+	f = sf - 1n;
+	while (r <= 7n && f >= 0n) {
+		let sq = r * 8n + f;
+		let sqPosB = 1n << sq;
 
-		if (sqPosB & (aBishopB !== 0)) {
+		if (sqPosB & (aBishopB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
-		r += 1;
-		f -= 1;
+		r += 1n;
+		f -= 1n;
 	}
 
-	r = sr - 1;
-	f = sf + 1;
-	while (f <= 7) {
-		let sq = r * 8 + f;
-		let sqPosB = 1 << sq;
+	r = sr - 1n;
+	f = sf + 1n;
+	while (f <= 7n && r >= 0n) {
+		let sq = r * 8n + f;
+		let sqPosB = 1n << sq;
 
-		if (sqPosB & (aBishopB !== 0)) {
+		if (sqPosB & (aBishopB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
-		f += 1;
-		r -= 1;
+		f += 1n;
+		r -= 1n;
 	}
 
-	r = sr - 1;
-	f = sf - 1;
-	while (true) {
-		let sq = r * 8 + f;
-		let sqPosB = 1 << sq;
+	r = sr - 1n;
+	f = sf - 1n;
+	while (r >= 0 && f >= 0) {
+		let sq = r * 8n + f;
+		let sqPosB = 1n << sq;
 
-		if (sqPosB & (aBishopB !== 0)) {
+		if (sqPosB & (aBishopB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
-		r -= 1;
-		f -= 1;
+		r -= 1n;
+		f -= 1n;
 	}
 	return attacks;
 }
 
 export function getRookAttacks(attackingPiece, square, blockboard, bitboards) {
-	let sr = square / 8;
-	let sf = square % 8;
+	let sr = square / 8n;
+	let sf = square % 8n;
 
-	let r = sr + 1;
-	let f;
+	let r = sr + 1n;
+	let f = 0n;
 
 	// potential attacking sqaures
 	let aRookB = bitboards[attackingPiece];
 	let attacks;
-	while (r <= 7) {
-		let sq = r * 8 + sf;
-		let sqPosB = 1 << sq;
+	while (r <= 7n) {
+		let sq = r * 8n + sf;
+		let sqPosB = 1n << sq;
 
-		if (aRookB & (sqPosB !== 0)) {
+		if (aRookB & (sqPosB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
-		r += 1;
+		r += 1n;
 	}
 
-	f = sf + 1;
-	while (f <= 7) {
-		let sq = sr * 8 + f;
-		let sqPosB = 1 << sq;
+	f = sf + 1n;
+	while (f <= 7n) {
+		let sq = sr * 8n + f;
+		let sqPosB = 1n << sq;
 
-		if (aRookB & (sqPosB !== 0)) {
+		if (aRookB & (sqPosB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
 		attacks |= sqPosB;
-		f += 1;
+		f += 1n;
 	}
 
-	r = sr - 1;
-	while (r >= 0) {
-		let sq = r * 8 + sf;
-		let sqPosB = 1 << sq;
+	r = sr - 1n;
+	while (r >= 0n) {
+		let sq = r * 8n + sf;
+		let sqPosB = 1n << sq;
 
-		if (aRookB & (sqPosB !== 0)) {
+		if (aRookB & (sqPosB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
 		attacks |= sqPosB;
-		r -= 1;
+		r -= 1n;
 	}
 
-	f = sf - 1;
-	while (f >= 0) {
-		let sq = sr * 8 + f;
-		let sqPosB = 1 << sq;
+	f = sf - 1n;
+	while (f >= 0n) {
+		let sq = sr * 8n + f;
+		let sqPosB = 1n << sq;
 
-		if (aRookB & (sqPosB !== 0)) {
+		if (aRookB & (sqPosB !== 0n)) {
 			attacks |= sqPosB;
 			break;
-		} else if (sqPosB & (blockboard !== 0)) break;
+		} else if (sqPosB & (blockboard !== 0n)) break;
 
 		attacks |= sqPosB;
 
-		f -= 1;
+		f -= 1n;
 	}
 	return attacks;
 }
 
 export function getPawnAttacks(square, side) {
-	let sqBitboard = 1 << square;
-	let attacks = 0;
+	let sqBitboard = 1n << square;
+	let attacks = 0n;
 	// white pawn
-	if (side === 0) {
-		if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile !== 0))
-			attacks |= sqBitboard >> 7;
-		if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile !== 0))
-			attacks |= sqBitboard >> 9;
+	if (side === 0n) {
+		if ((sqBitboard >> 7n) & (FILE_VALIDATION.notAFile !== 0n))
+			attacks |= sqBitboard >> 7n;
+		if ((sqBitboard >> 9n) & (FILE_VALIDATION.notHFile !== 0n))
+			attacks |= sqBitboard >> 9n;
 	}
 	// black pawn
 	else {
-		if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile !== 0))
-			attacks |= sqBitboard << 9;
-		if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile !== 0))
-			attacks |= sqBitboard << 7;
+		if ((sqBitboard << 9n) & (FILE_VALIDATION.notAFile !== 0n))
+			attacks |= sqBitboard << 9n;
+		if ((sqBitboard << 7n) & (FILE_VALIDATION.notHFile !== 0n))
+			attacks |= sqBitboard << 7n;
 	}
 	return attacks;
 }
 
 export function getKingAttacks(square) {
-	let sqBitboard = 1 << square;
-	let attacks;
+	let sqBitboard = 1n << square;
+	let attacks = 0n;
 	// upwards
-	if (sqBitboard >> 8 !== 0) attacks |= sqBitboard >> 8;
-	if ((sqBitboard >> 9) & (FILE_VALIDATION.notHFile !== 0))
-		attacks |= sqBitboard >> 9;
-	if ((sqBitboard >> 7) & (FILE_VALIDATION.notAFile !== 0))
-		attacks |= sqBitboard >> 7;
-	if ((sqBitboard >> 1) & (FILE_VALIDATION.notHFile !== 0))
-		attacks |= sqBitboard >> 1;
+	if (sqBitboard >> 8n !== 0n) attacks |= sqBitboard >> 8n;
+	if ((sqBitboard >> 9n) & (FILE_VALIDATION.notHFile !== 0n))
+		attacks |= sqBitboard >> 9n;
+	if ((sqBitboard >> 7n) & (FILE_VALIDATION.notAFile !== 0n))
+		attacks |= sqBitboard >> 7n;
+	if ((sqBitboard >> 1n) & (FILE_VALIDATION.notHFile !== 0n))
+		attacks |= sqBitboard >> 1n;
 
 	// downwards
-	if (sqBitboard << 8 !== 0) attacks |= sqBitboard << 8;
-	if ((sqBitboard << 9) & (FILE_VALIDATION.notAFile !== 0))
-		attacks |= sqBitboard << 9;
-	if ((sqBitboard << 7) & (FILE_VALIDATION.notHFile !== 0))
-		attacks |= sqBitboard << 7;
-	if ((sqBitboard << 1) & (FILE_VALIDATION.notAFile !== 0))
-		attacks |= sqBitboard << 1;
+	if (sqBitboard << 8n !== 0n) attacks |= sqBitboard << 8n;
+	if ((sqBitboard << 9n) & (FILE_VALIDATION.notAFile !== 0n))
+		attacks |= sqBitboard << 9n;
+	if ((sqBitboard << 7n) & (FILE_VALIDATION.notHFile !== 0n))
+		attacks |= sqBitboard << 7n;
+	if ((sqBitboard << 1n) & (FILE_VALIDATION.notAFile !== 0n))
+		attacks |= sqBitboard << 1n;
 
 	return attacks;
 }
 
 export function getKnightAttacks(square) {
-	let sqBitboard = 1 << square;
-	let attacks = 0;
+	let sqBitboard = 1n << square;
+	let attacks = 0n;
 	// upwards
-	if ((sqBitboard >> 15) & (FILE_VALIDATION.FILE_VALIDATION.notAFile !== 0))
-		attacks |= sqBitboard >> 15;
-	if ((sqBitboard >> 17) & (FILE_VALIDATION.notHFile !== 0))
-		attacks |= sqBitboard >> 17;
-	if ((sqBitboard >> 6) & (FILE_VALIDATION.notABFile !== 0))
-		attacks |= sqBitboard >> 6;
-	if ((sqBitboard >> 10) & (FILE_VALIDATION.notHGFile !== 0))
-		attacks |= sqBitboard >> 10;
+	if ((sqBitboard >> 15n) & (FILE_VALIDATION.FILE_VALIDATION.notAFile !== 0n))
+		attacks |= sqBitboard >> 15n;
+	if ((sqBitboard >> 17n) & (FILE_VALIDATION.notHFile !== 0n))
+		attacks |= sqBitboard >> 17n;
+	if ((sqBitboard >> 6n) & (FILE_VALIDATION.notABFile !== 0n))
+		attacks |= sqBitboard >> 6n;
+	if ((sqBitboard >> 10n) & (FILE_VALIDATION.notHGFile !== 0n))
+		attacks |= sqBitboard >> 10n;
 
 	// downwards
-	if ((sqBitboard << 15) & (FILE_VALIDATION.notHFile !== 0))
-		attacks |= sqBitboard << 15;
-	if ((sqBitboard << 17) & (FILE_VALIDATION.notAFile !== 0))
-		attacks |= sqBitboard << 17;
-	if ((sqBitboard << 6) & (FILE_VALIDATION.notHGFile !== 0))
-		attacks |= sqBitboard << 6;
-	if ((sqBitboard << 10) & (FILE_VALIDATION.notABFile !== 0))
-		attacks |= sqBitboard << 10;
+	if ((sqBitboard << 15n) & (FILE_VALIDATION.notHFile !== 0n))
+		attacks |= sqBitboard << 15n;
+	if ((sqBitboard << 17n) & (FILE_VALIDATION.notAFile !== 0n))
+		attacks |= sqBitboard << 17n;
+	if ((sqBitboard << 6n) & (FILE_VALIDATION.notHGFile !== 0n))
+		attacks |= sqBitboard << 6n;
+	if ((sqBitboard << 10n) & (FILE_VALIDATION.notABFile !== 0n))
+		attacks |= sqBitboard << 10n;
 
 	return attacks;
 }
@@ -272,22 +266,22 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	}
 
 	let side;
-	if (piece < 6) {
-		side = 1;
+	if (piece < 6n) {
+		side = 1n;
 	}
 
 	// check black pawn attacks on sq
 	if (
-		side === 0 &&
-		getPawnAttacks(square, side) & (bitboards[PIECE.p] !== 0)
+		side === 0n &&
+		getPawnAttacks(square, side) & (bitboards[PIECE.p] !== 0n)
 	) {
 		return true;
 	}
 
 	// check white pawn attacks on sq
 	if (
-		side === 1 &&
-		getPawnAttacks(square, side) & (bitboards[PIECE.P] !== 0)
+		side === 1n &&
+		getPawnAttacks(square, side) & (bitboards[PIECE.P] !== 0n)
 	) {
 		return true;
 	}
@@ -295,7 +289,7 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	// check kings attacks on sq
 	if (
 		getKingAttacks(square) &
-		((side === 0 ? bitboards[PIECE.k] : bitboards[PIECE.K]) !== 0)
+		((side === 0n ? bitboards[PIECE.k] : bitboards[PIECE.K]) !== 0n)
 	) {
 		return true;
 	}
@@ -303,48 +297,48 @@ export function isSquareAttacked(square, piece, bitboards, blockboard) {
 	// check knight attacks on sq
 	if (
 		getKnightAttacks(square) &
-		((side === 0 ? bitboards[PIECE.n] : bitboards[PIECE.N]) !== 0)
+		((side === 0n ? bitboards[PIECE.n] : bitboards[PIECE.N]) !== 0n)
 	) {
 		return true;
 	}
 
 	// bishop attacks on sq
 	let bishopAttacks = getBishopAttacks(
-		side === 0 ? PIECE.b : PIECE.B,
+		side === 0n ? PIECE.b : PIECE.B,
 		square,
 		blockboard,
 		bitboards
 	);
-	if (bishopAttacks !== 0) {
+	if (bishopAttacks !== 0n) {
 		return true;
 	}
 
 	// rook attacks on sq
 	let rookAttacks = getRookAttacks(
-		side === 0 ? PIECE.r : PIECE.R,
+		side === 0n ? PIECE.r : PIECE.R,
 		square,
 		blockboard,
 		bitboards
 	);
-	if (rookAttacks !== 0) {
+	if (rookAttacks !== 0n) {
 		return true;
 	}
 
 	// queen attacks on sq
 	let queenAttacks =
 		getBishopAttacks(
-			side === 0 ? PIECE.q : PIECE.Q,
+			side === 0n ? PIECE.q : PIECE.Q,
 			square,
 			blockboard,
 			bitboards
 		) |
 		getRookAttacks(
-			side === 0 ? PIECE.q : PIECE.Q,
+			side === 0n ? PIECE.q : PIECE.Q,
 			square,
 			blockboard,
 			bitboards
 		);
-	if (queenAttacks !== 0) {
+	if (queenAttacks !== 0n) {
 		return true;
 	}
 
@@ -360,37 +354,33 @@ export function encodeValuesToMoveValue(
 	gameId,
 	moveCount
 ) {
-	let moveValue = BigInt(0);
+	let moveValue = 0n;
 	moveValue = moveValue | BigInt(sourceSq);
-	moveValue = moveValue | (BigInt(targetSq) << BigInt(6));
-	moveValue = moveValue | (BigInt(promotedPiece) << BigInt(12));
-	if (isCastle === true) moveValue = moveValue | (BigInt(1) << BigInt(16));
-	moveValue = moveValue | (BigInt(side) << BigInt(17));
-	moveValue = moveValue | (BigInt(gameId) << BigInt(20));
-	moveValue = moveValue | (BigInt(moveCount + 1) << BigInt(36));
+	moveValue = moveValue | (BigInt(targetSq) << 6n);
+	moveValue = moveValue | (BigInt(promotedPiece) << 12n);
+	if (isCastle === true) moveValue = moveValue | (BigInt(1) << 16n);
+	moveValue = moveValue | (BigInt(side) << 17n);
+	moveValue = moveValue | (BigInt(gameId) << 20n);
+	moveValue = moveValue | (BigInt(moveCount + 1) << 36n);
 	return moveValue;
 }
 
 export function decodeMoveToMoveObj(moveValue, bitboards) {
-	let sourceSq = moveValue & BigInt(63);
-	let targetSq = (moveValue >> BigInt(6)) & BigInt(63);
-	let side = (moveValue >> BigInt(17)) & BigInt(1);
-	let gameId = moveValue >> BigInt(20);
-	let moveCount = moveValue >> BigInt(36);
+	let sourceSq = moveValue & 63n;
+	let targetSq = (moveValue >> 6n) & 63n;
+	let side = (moveValue >> 17n) & 1n;
+	let gameId = moveValue >> 20n;
+	let moveCount = moveValue >> 36n;
 
 	// flags
-	let pawnPromotion = (moveValue >> BigInt(12)) & BigInt(15);
-	let castleFlag = (moveValue >> BigInt(16)) & BigInt(1);
-
-	console.log(moveCount);
+	let pawnPromotion = (moveValue >> 12n) & 15n;
+	let castleFlag = (moveValue >> 16n) & 1n;
 
 	// set flags
 	if (
 		!(
-			(pawnPromotion > BigInt(0) &&
-				pawnPromotion < BigInt(12) &&
-				castleFlag == BigInt(0)) ||
-			pawnPromotion == BigInt(0)
+			(pawnPromotion > 0n && pawnPromotion < 12n && castleFlag == 0n) ||
+			pawnPromotion == 0n
 		)
 	) {
 		return {
@@ -400,7 +390,7 @@ export function decodeMoveToMoveObj(moveValue, bitboards) {
 	}
 	let moveFlag = MOVE_FLAG.NoFlag;
 	let promotedToPiece = PIECE.uk;
-	if (pawnPromotion != 0) {
+	if (pawnPromotion != 0n) {
 		moveFlag = MOVE_FLAG.PawnPromotion;
 		promotedToPiece = pawnPromotion;
 	}
@@ -410,7 +400,7 @@ export function decodeMoveToMoveObj(moveValue, bitboards) {
 	console.log("MOVE FLAG", moveFlag, MOVE_FLAG.NoFlag);
 
 	// set squares
-	let moveBySq = 0;
+	let moveBySq = 0n;
 	let moveLeftShift = false;
 	if (targetSq > sourceSq) {
 		moveBySq = targetSq - sourceSq;
@@ -430,14 +420,14 @@ export function decodeMoveToMoveObj(moveValue, bitboards) {
 	// set pieces
 	let sourcePiece = PIECE.uk;
 	let targetPiece = PIECE.uk;
-	let sourcePieceBitBoard = BigInt(1) << sourceSq;
-	let targetPieceBitBoard = BigInt(1) << targetSq;
+	let sourcePieceBitBoard = 1n << sourceSq;
+	let targetPieceBitBoard = 1n << targetSq;
 	for (let index = 0; index < bitboards.length; index++) {
 		let board = bitboards[index];
-		if ((sourcePieceBitBoard & board) > 0) {
+		if ((sourcePieceBitBoard & board) > 0n) {
 			sourcePiece = index;
 		}
-		if ((targetPieceBitBoard & board) > 0) {
+		if ((targetPieceBitBoard & board) > 0n) {
 			targetPiece = index;
 		}
 	}
@@ -469,9 +459,8 @@ export function decodeMoveToMoveObj(moveValue, bitboards) {
 }
 
 export function isMoveValid(moveValue, gameState) {
-	const d = decodeMoveToMoveObj(moveValue, gameState.bitboards);
-	const { move, err } = d;
-	console.log(d, " om");
+	const { move, err } = decodeMoveToMoveObj(moveValue, gameState.bitboards);
+
 	if (err === true) {
 		return false;
 	}
@@ -480,11 +469,11 @@ export function isMoveValid(moveValue, gameState) {
 		return false;
 	}
 
-	if (move.side !== gameState.side) {
+	if (move.side !== BigInt(gameState.side)) {
 		return false;
 	}
 
-	if (gameState.moveCount + 1 !== move.moveCount) {
+	if (BigInt(gameState.moveCount + 1) !== move.moveCount) {
 		return false;
 	}
 
@@ -1372,3 +1361,14 @@ export function parseIntToHex(val) {
 }
 
 /* global BigInt */
+
+/**
+ *
+ * TODO List
+ * 1. Fix BigInt thing for isMoveValid function
+ * 2. Add PM functions to router contract
+ * 3. Enabled electing move
+ * 4. Buy & sell of outcome tokens of the move
+ * 5. Write Math for buy & sell orders (Probably a nice opportunity to recheck old math)
+ *
+ */
