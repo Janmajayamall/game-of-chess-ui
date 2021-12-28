@@ -36,10 +36,6 @@ export const MOVE_FLAG = {
 	PawnPromotion: 2n,
 };
 
-export function sqBoardWithIndex(index) {
-	return 1n << BigInt(index);
-}
-
 export function getBlockerboard(bitboards) {
 	let blockerboard = 0n;
 	bitboards.forEach((board) => {
@@ -354,14 +350,23 @@ export function encodeValuesToMoveValue(
 	gameId,
 	moveCount
 ) {
+	console.log(
+		sourceSq,
+		targetSq,
+		promotedPiece,
+		isCastle,
+		side,
+		gameId,
+		moveCount
+	);
 	let moveValue = 0n;
-	moveValue = moveValue | BigInt(sourceSq);
-	moveValue = moveValue | (BigInt(targetSq) << 6n);
-	moveValue = moveValue | (BigInt(promotedPiece) << 12n);
-	if (isCastle === true) moveValue = moveValue | (BigInt(1) << 16n);
-	moveValue = moveValue | (BigInt(side) << 17n);
-	moveValue = moveValue | (BigInt(gameId) << 20n);
-	moveValue = moveValue | (BigInt(moveCount + 1) << 36n);
+	moveValue = moveValue | sourceSq;
+	moveValue = moveValue | (targetSq << 6n);
+	moveValue = moveValue | (promotedPiece << 12n);
+	if (isCastle === true) moveValue = moveValue | (1n << 16n);
+	moveValue = moveValue | (side << 17n);
+	moveValue = moveValue | (gameId << 20n);
+	moveValue = moveValue | (moveCount << 36n);
 	return moveValue;
 }
 
@@ -465,37 +470,37 @@ export function isMoveValid(moveValue, gameState) {
 		return false;
 	}
 
-	if (gameState.state !== 1) {
+	if (gameState.state !== 1n) {
 		return false;
 	}
 
-	if (move.side !== BigInt(gameState.side)) {
+	if (move.side !== gameState.side) {
 		return false;
 	}
 
-	if (BigInt(gameState.moveCount + 1) !== move.moveCount) {
+	if (gameState.moveCount + 1n !== move.moveCount) {
 		return false;
 	}
 
 	// source piece should match playing side
-	if (gameState.side === 0 && move.sourcePiece < 6) {
+	if (gameState.side === 0n && move.sourcePiece < 6n) {
 		// sourcePiece is black, when side is white
 		return false;
 	}
-	if (gameState.side === 1 && move.sourcePiece >= 6) {
+	if (gameState.side === 1n && move.sourcePiece >= 6n) {
 		// sourcePiece is white, when side is black
 		return false;
 	}
 
 	// target piece cannot be of playiing side
 	if (
-		gameState.side === 0 &&
+		gameState.side === 0n &&
 		move.targetPiece !== PIECE.uk &&
-		move.targetPiece >= 6
+		move.targetPiece >= 6n
 	) {
 		return false;
 	}
-	if (gameState.side === 1 && move.targetPiece < 6) {
+	if (gameState.side === 1n && move.targetPiece < 6n) {
 		return false;
 	}
 
@@ -509,42 +514,42 @@ export function isMoveValid(moveValue, gameState) {
 		// white king
 		if (move.sourcePiece === PIECE.K) {
 			// king should be on original pos
-			if (move.sourceSq !== 60) {
+			if (move.sourceSq !== 60n) {
 				return false;
 			}
 
 			// targetSq can only be 62 or 58
-			if (move.targetSq !== 62 && move.targetSq !== 58) {
+			if (move.targetSq !== 62n && move.targetSq !== 58n) {
 				return false;
 			}
 
 			// king side castling
-			if (move.targetSq === 62) {
+			if (move.targetSq === 62n) {
 				if (gameState.wkC === false) {
 					return false;
 				}
 
 				// rook should be on original pos
-				if ((1 << 63) & (gameState.bitboards[PIECE.R] === 0)) {
+				if ((1n << 63n) & (gameState.bitboards[PIECE.R] === 0n)) {
 					return false;
 				}
 
 				// no attacks to king and thru passage
 				if (
 					isSquareAttacked(
-						60,
+						60n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						61,
+						61n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						62,
+						62n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
@@ -555,40 +560,40 @@ export function isMoveValid(moveValue, gameState) {
 
 				// passage should be empty
 				if (
-					((1 << 61) & blockerboard) !== 0 ||
-					((1 << 62) & blockerboard) !== 0
+					((1n << 61n) & blockerboard) !== 0n ||
+					((1n << 62n) & blockerboard) !== 0n
 				) {
 					return false;
 				}
 			}
 
 			// queen side castling
-			if (move.targetSq === 58) {
+			if (move.targetSq === 58n) {
 				if (gameState.wqC === false) {
 					return false;
 				}
 
 				// rook should on original pos
-				if ((1 << 56) & (gameState.bitboards[PIECE.R] === 0)) {
+				if ((1n << 56n) & (gameState.bitboards[PIECE.R] === 0n)) {
 					return false;
 				}
 
 				// no attacks to king and thru passage
 				if (
 					isSquareAttacked(
-						60,
+						60n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						59,
+						59n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						58,
+						58n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
@@ -599,9 +604,9 @@ export function isMoveValid(moveValue, gameState) {
 
 				// passage should be empty
 				if (
-					((1 << 57) & blockerboard) !== 0 ||
-					((1 << 58) & blockerboard) !== 0 ||
-					((1 << 59) & blockerboard) !== 0
+					((1n << 57n) & blockerboard) !== 0n ||
+					((1n << 58n) & blockerboard) !== 0n ||
+					((1n << 59n) & blockerboard) !== 0n
 				) {
 					return false;
 				}
@@ -611,42 +616,42 @@ export function isMoveValid(moveValue, gameState) {
 		// black king
 		if (move.sourcePiece === PIECE.k) {
 			// king should on original pos
-			if (move.sourceSq !== 4) {
+			if (move.sourceSq !== 4n) {
 				return false;
 			}
 
 			// targetSq can only be 2 or 6
-			if (move.targetSq !== 2 && move.targetSq !== 6) {
+			if (move.targetSq !== 2n && move.targetSq !== 6n) {
 				return false;
 			}
 
 			// king side castling
-			if (move.targetSq === 6) {
+			if (move.targetSq === 6n) {
 				if (gameState.bkC === false) {
 					return false;
 				}
 
 				// rook should be on 7
-				if ((1 << 7) & (gameState.bitboards[PIECE.r] === 0)) {
+				if ((1n << 7n) & (gameState.bitboards[PIECE.r] === 0n)) {
 					return false;
 				}
 
 				// no attacks on king sq & thru sqaures
 				if (
 					isSquareAttacked(
-						4,
+						4n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						5,
+						5n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						6,
+						6n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
@@ -657,40 +662,40 @@ export function isMoveValid(moveValue, gameState) {
 
 				// passage should be empty
 				if (
-					(1 << 5) & (blockerboard !== 0) ||
-					(1 << 6) & (blockerboard !== 0)
+					(1n << 5n) & (blockerboard !== 0n) ||
+					(1n << 6n) & (blockerboard !== 0n)
 				) {
 					return false;
 				}
 			}
 
 			// queen side castling
-			if (move.targetSq === 2) {
+			if (move.targetSq === 2n) {
 				if (gameState.bqC === false) {
 					return false;
 				}
 
 				// rook should be on 0
-				if (1 & (gameState.bitboards[PIECE.r] === 0)) {
+				if (1n & (gameState.bitboards[PIECE.r] === 0n)) {
 					return false;
 				}
 
 				// no attacks on king sq & thru squares
 				if (
 					isSquareAttacked(
-						4,
+						4n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						3,
+						3n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
 					) ||
 					isSquareAttacked(
-						2,
+						2n,
 						move.sourcePiece,
 						gameState.bitboards,
 						blockerboard
@@ -701,9 +706,9 @@ export function isMoveValid(moveValue, gameState) {
 
 				// passage should be empty
 				if (
-					(1 << 3) & (blockerboard !== 0) ||
-					(1 << 2) & (blockerboard !== 0) ||
-					(1 << 1) & (blockerboard !== 0)
+					(1n << 3n) & (blockerboard !== 0n) ||
+					(1n << 2n) & (blockerboard !== 0n) ||
+					(1n << 1n) & (blockerboard !== 0n)
 				) {
 					return false;
 				}
@@ -1277,7 +1282,7 @@ export function parseGameStateToFenString(gameState) {
 		let board = gameState.bitboards[pIndex];
 		let d = "";
 		for (let index = 0; index < 64; index++) {
-			if ((board & sqBoardWithIndex(index)) !== BIG_0) {
+			if ((board & (1n << BigInt(index))) !== 0n) {
 				boardMap[index] = pIndex;
 				d += `1`;
 			} else {
@@ -1312,7 +1317,7 @@ export function parseGameStateToFenString(gameState) {
 	}
 
 	// side
-	if (gameState.side === 0) {
+	if (gameState.side === 0n) {
 		fen += " w ";
 	} else {
 		fen += " b ";
@@ -1341,7 +1346,7 @@ export function parseGameStateToFenString(gameState) {
 	}
 
 	// enpassant sq
-	if (gameState.enpassantSq > 0) {
+	if (gameState.enpassantSq > 0n) {
 		fen += ` ${gameState.enpassantSq} `;
 	} else {
 		fen += " - ";
@@ -1351,7 +1356,7 @@ export function parseGameStateToFenString(gameState) {
 	fen += `${gameState.halfMoveCount} `;
 
 	// moves
-	fen += `${gameState.moveCount / 2}`;
+	fen += `${gameState.moveCount / 2n}`;
 
 	return fen;
 }
