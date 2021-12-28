@@ -1,0 +1,349 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gocAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountOutToken0Min",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountOutToken1Min",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountInC",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fixedTokenIndex",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyMinTokensForExactCTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_moveValue",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fundingAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "betAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_for",
+        "type": "uint256"
+      }
+    ],
+    "name": "createFundBetOnMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "_gameId",
+        "type": "uint16"
+      }
+    ],
+    "name": "getGameState",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint64[12]",
+            "name": "bitboards",
+            "type": "uint64[12]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "state",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "side",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winner",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint16",
+            "name": "moveCount",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "halfMoveCount",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint64",
+            "name": "enpassantSq",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bool",
+            "name": "bkC",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "bqC",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "wkC",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "wqC",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct IGocDataTypes.GameState",
+        "name": "gameState",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMoveMetadataFromMoveValue",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "side",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint16",
+            "name": "gameId",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "moveCount",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sourceSq",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "targetSq",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "moveBySq",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint64",
+            "name": "sourcePieceBitBoard",
+            "type": "uint64"
+          },
+          {
+            "internalType": "uint64",
+            "name": "targetPieceBitBoard",
+            "type": "uint64"
+          },
+          {
+            "internalType": "bool",
+            "name": "moveLeftShift",
+            "type": "bool"
+          },
+          {
+            "internalType": "enum IGocDataTypes.Piece",
+            "name": "sourcePiece",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum IGocDataTypes.Piece",
+            "name": "targetPiece",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum IGocDataTypes.Piece",
+            "name": "promotedToPiece",
+            "type": "uint8"
+          },
+          {
+            "internalType": "enum IGocDataTypes.MoveFlag",
+            "name": "moveFlag",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct IGocDataTypes.MoveMetadata",
+        "name": "_moveMetadata",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "goc",
+    "outputs": [
+      {
+        "internalType": "contract Goc",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "redeemBetAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_for",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountInToken",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "redeemWins",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountInToken0",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountInToken1",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "redeemWinsBothOutcome",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "redeenWinsMax",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amountInToken0",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountInToken1",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amountOutTokenCMin",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "moveValue",
+        "type": "uint256"
+      }
+    ],
+    "name": "sellExactTokensForMinCTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
